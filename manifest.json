@@ -1,11 +1,11 @@
 {
-	"id": "sample-plugin",
-	"name": "Sample Plugin",
-	"version": "1.0.0",
+	"id": "dev.fperson.daily-note-casing",
+	"name": "daily note casing",
+	"version": "0.0.1",
 	"minAppVersion": "0.15.0",
-	"description": "Demonstrates some of the capabilities of the Obsidian API.",
-	"author": "Obsidian",
-	"authorUrl": "https://obsidian.md",
-	"fundingUrl": "https://obsidian.md/pricing",
+	"description": "lets u automatically lowercase ur daily note",
+	"author": "f-person",
+	"authorUrl": "https://fperson.dev",
+	"fundingUrl": "https://buymeacoffee.com/fperson",
 	"isDesktopOnly": false
 }
