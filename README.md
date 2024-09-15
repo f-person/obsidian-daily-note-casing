@@ -24,3 +24,10 @@ or `UPPERCASE` (if u want that).
 
 whether the plugin should notify u that it renamed a created daily note.
 i think it's pretty distracting, but maybe u want to know idk ¯\\_(ツ)_/¯
+
+# batch renaming
+if u have a bunch of daily notes from the past & you'd like to batch-rename
+them to match your preferred case, run the "daily notes: set case for all" command
+
+TODO(f-person): implement the batch-rename command.
+consider showing the results of the batch rename and adding a confirmation dialog.

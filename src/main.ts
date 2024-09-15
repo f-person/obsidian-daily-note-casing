@@ -6,6 +6,7 @@ import {
 	applyCasing,
 } from "./plugin_settings";
 import { join } from "path";
+import { reportPluginError } from "./utils";
 
 export default class DailyNoteCasing extends Plugin {
 	settings: DailyNoteCasingSettings;
@@ -15,6 +16,7 @@ export default class DailyNoteCasing extends Plugin {
 
 		this.registerEvent(
 			// TODO(f-person): this gets called once for each file when obsidian is open. we probably don't want that?
+			// as this will override any already existing files without an explicit action from the user, which is meh
 			this.app.vault.on("create", (abstractFile) => {
 				if (abstractFile instanceof TFile) {
 					this.handleFileCreated(abstractFile);
@@ -28,28 +30,41 @@ export default class DailyNoteCasing extends Plugin {
 	onunload() {}
 
 	async handleFileCreated(file: TFile) {
-		if (this.isFileDailyNote(file)) {
-			console.log("daily note file created", file);
-			await this.renameDailyNote(file);
+		const dateFormat = this.settings.dailyNoteDateFormat;
+		const didSetDateFormat = dateFormat.trim().length > 0;
+		if (!didSetDateFormat) {
+			// the plugin shouldn't do anything unless the date format setting is set
+			return;
+		}
 
+		const isDailyNoteFile = moment(
+			file.basename,
+			dateFormat,
+			true
+		).isValid();
+
+		if (isDailyNoteFile) {
+			console.log("daily note file created", file);
 			const casing = this.settings.casing;
+
+			const renamedFile = await this.applyCasingToBasename(file);
+			if (!renamedFile) {
+				return;
+			}
+
 			const casingInItsCaseLol = applyCasing(casing, casing);
 
-			new Notice(
-				`changed the casing of the daily note to ${casingInItsCaseLol}`
-			);
+			const shouldNotifyAboutRename = this.settings.noticeOnRename;
+			if (shouldNotifyAboutRename) {
+				const renamedBasename = renamedFile.basename;
+				new Notice(
+					`your daily note is now in ${casingInItsCaseLol}: ${renamedBasename}`
+				);
+			}
 		}
 	}
 
-	isFileDailyNote(file: TFile): boolean {
-		const basename = file.basename;
-		const dateFormat = this.settings.dailyNoteDateFormat;
-
-		const isFileDailyNote = moment(basename, dateFormat, true).isValid();
-		return isFileDailyNote;
-	}
-
-	async renameDailyNote(file: TFile) {
+	async applyCasingToBasename(file: TFile): Promise<TFile | null> {
 		// because obsidian doesn't let you rename a file to the same name,
 		// and the check for this is case-insensitive, we move the file to
 		// a temp path first to then rename it to the correct case.
@@ -58,15 +73,27 @@ export default class DailyNoteCasing extends Plugin {
 		const tempFile = await this.changeFileBasename(file, tempBasename);
 
 		if (!tempFile) {
-			console.error("Temp file not found after rename", tempBasename);
-			new Notice("Error renaming daily note to lowercase");
-			return;
+			reportPluginError(
+				`error renaming daily note to a temporary name: file ${tempBasename} not found`
+			);
+
+			return null;
 		}
 
 		const casing = this.settings.casing;
 		const basenameWithCasingApplied = applyCasing(basename, casing);
 
-		await this.changeFileBasename(tempFile, basenameWithCasingApplied);
+		const renamedFile = await this.changeFileBasename(
+			tempFile,
+			basenameWithCasingApplied
+		);
+		if (!renamedFile) {
+			reportPluginError(
+				`error applying ${casing} to ${basename}: ${basenameWithCasingApplied} not found`
+			);
+		}
+
+		return renamedFile;
 	}
 
 	/**
@@ -95,7 +122,6 @@ export default class DailyNoteCasing extends Plugin {
 			kDefaultSettings,
 			await this.loadData()
 		);
-		console.log(this.settings);
 	}
 
 	async saveSettings() {
