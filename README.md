@@ -1,7 +1,7 @@
-if you're like me & prefer lowercase text or filenames, this plugin is for u 💖
+if you prefer your filenames lowercase or UPPERCASE, this plugin is for u 💖
 
-this plugin lets you lowercase or UPPERCASE your daily notes upon creation,
-so `Sep 15, 2024, Sun` becomes `sep 15, 2024, sun`, or  `24 apr, 1915` -> `24 APR, 1915`.
+it will convert the name of your daily note to your preferred case upon creation,
+so `Sep 15, 2024, Sun` will be `sep 15, 2024, sun`, or  `24 apr, 1915` -> `24 APR, 1915`.
 
 # configuration
 the plugin has a few settings, check them out if you'd like some config.

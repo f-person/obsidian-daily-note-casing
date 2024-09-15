@@ -14,15 +14,20 @@ export default class DailyNoteCasing extends Plugin {
 	async onload() {
 		await this.loadSettings();
 
-		this.registerEvent(
-			// TODO(f-person): this gets called once for each file when obsidian is open. we probably don't want that?
-			// as this will override any already existing files without an explicit action from the user, which is meh
-			this.app.vault.on("create", (abstractFile) => {
-				if (abstractFile instanceof TFile) {
-					this.handleFileCreated(abstractFile);
+		// registering the listener on layout ready to prevent it from being called with
+		// all vault files on vault load.
+		this.app.workspace.onLayoutReady(() => {
+			const onCreateListener = this.app.vault.on(
+				"create",
+				(abstractFile) => {
+					if (abstractFile instanceof TFile) {
+						this.handleFileCreated(abstractFile);
+					}
 				}
-			})
-		);
+			);
+
+			this.registerEvent(onCreateListener);
+		});
 
 		this.addSettingTab(new DailyNoteCasingSettingTab(this.app, this));
 	}
@@ -44,7 +49,6 @@ export default class DailyNoteCasing extends Plugin {
 		).isValid();
 
 		if (isDailyNoteFile) {
-			console.log("daily note file created", file);
 			const casing = this.settings.casing;
 
 			const renamedFile = await this.applyCasingToBasename(file);
