@@ -3,7 +3,7 @@
 	"name": "daily note casing",
 	"version": "0.0.1",
 	"minAppVersion": "0.15.0",
-	"description": "lets u automatically lowercase ur daily note",
+	"description": "lets u automatically lowercase or UPPERCASE your daily notes",
 	"author": "f-person",
 	"authorUrl": "https://fperson.dev",
 	"fundingUrl": "https://buymeacoffee.com/fperson",

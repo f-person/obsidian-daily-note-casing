@@ -1,17 +1,10 @@
 if you prefer your filenames lowercase or UPPERCASE, this plugin is for u 💖
 
-it will convert the name of your daily note to your preferred case upon creation,
+it will convert the name of your daily notes to your preferred case upon creation,
 so `Sep 15, 2024, Sun` will be `sep 15, 2024, sun`, or  `24 apr, 1915` -> `24 APR, 1915`.
 
 # configuration
-the plugin has a few settings, check them out if you'd like some config.
-otherwise, you only need to set `daily note date format` to get the plugin working.
-
-## daily note date format
-> no default value, the plugin won't work until you set this value.
-
-the date format that the daily notes plugin uses. copy it over from the 
-settings of daily notes (obsidian settings -> core plugins -> daily notes -> date format).
+the plugin has a couple of settings u can optionally tweak to your liking:
 
 ## casing
 > default value: `lowercase`

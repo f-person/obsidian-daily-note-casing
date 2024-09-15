@@ -35,9 +35,9 @@ export default class DailyNoteCasing extends Plugin {
 	onunload() {}
 
 	async handleFileCreated(file: TFile) {
-		const dateFormat = this.settings.dailyNoteDateFormat;
-		const didSetDateFormat = dateFormat.trim().length > 0;
-		if (!didSetDateFormat) {
+		const dateFormat = this.getDailyNoteDateFormat();
+		const hasDateFormat = dateFormat.trim().length > 0;
+		if (!hasDateFormat) {
 			// the plugin shouldn't do anything unless the date format setting is set
 			return;
 		}
@@ -68,8 +68,16 @@ export default class DailyNoteCasing extends Plugin {
 		}
 	}
 
+	getDailyNoteDateFormat(): string {
+		// TODO(f-person): consider making this work for the periodic notes plugin too
+		const dailyNotesPlugin =
+			this.app.internalPlugins.getPluginById("daily-notes");
+
+		return dailyNotesPlugin.instance.options.format;
+	}
+
 	async applyCasingToBasename(file: TFile): Promise<TFile | null> {
-		// because obsidian doesn't let you rename a file to the same name,
+		// because obsidian may not let you rename a file to the same name,
 		// and the check for this is case-insensitive, we move the file to
 		// a temp path first to then rename it to the correct case.
 		const basename = file.basename;
